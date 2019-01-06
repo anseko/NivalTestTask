@@ -16,6 +16,7 @@ public class Environment : MonoBehaviour
     public GameObject TilePrefab;
     public GameObject UnitPrefab;
     public NavMeshSurface meshSurface;
+
     // Start is called before the first frame update
     void Start()
     {

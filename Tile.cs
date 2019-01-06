@@ -26,6 +26,8 @@ public class Tile : MonoBehaviour
 
     public States prevState;
 
+    public Tile cameFrom { get; set; } //только для поиска пути
+
     private TileState _state;
 
     public GameObject go
@@ -58,6 +60,7 @@ public class Tile : MonoBehaviour
 
         neighbors = new List<Tile>();
         GetNeighbors();
+        cameFrom = null;
     }
 
     void Update()

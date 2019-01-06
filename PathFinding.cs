@@ -2,19 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-/**
- * New algorithm would be some like that:
- *  - Get new destination point
- *  - Start A* from current position to dest point
- *  - While we can raycast it, it goes on
- *  - if not, then make NavMeshAgent dest the last reachable point by raycasting
- *  - continue A* flooding 
- *  - and so on while not reach the final dest point
- * 
- * pretty obvious, isn't it?
- **/
-
 public class PathFinding
 {
     class Node
@@ -35,23 +22,15 @@ public class PathFinding
     }
 
 
-    Node start;
-    Node final;
 
+    Unit unit;
 
-
-    public PathFinding(Tile _start, Tile _final)
+    public PathFinding(Unit _unit)
     {
-        start.tile = _start;
-        start.g = 0;
-        start.h = h_func(start, final);
-        start.f = start.h + start.g; 
-        final.tile = _final;
-
-
+        unit = _unit;
     }
 
-
+    //а*
     private List<Node> MakeWay(Node start, Node final)
     {
         List<Node> Queue = new List<Node>();
@@ -77,6 +56,7 @@ public class PathFinding
                 Node y = new Node(i);
                 if(i.GetState() == Tile.States.BUSY || CloseSet.Contains(y))
                 {
+                    Debug.Log("y is already visited");
                     continue;
                 }
                 t_g_score = x.g + Vector3.Distance(x.tile.go.transform.position, i.go.transform.position);
@@ -96,31 +76,87 @@ public class PathFinding
         return new List<Node>();
     }
 
-    public List<Tile> MakeWaypoints()
+
+    //обход в ширину
+    private List<Tile> MakeEzWay(Tile start, Tile final)
     {
-        Tile startTile = start.tile;
-        Tile finalTile = final.tile;
+        Queue<Tile> Queue = new Queue<Tile>();
+        HashSet<Tile> CloseSet = new HashSet<Tile>();
 
-        List<Node> path = MakeWay(start, final);
-        List<Tile> waypoints = new List<Tile>();
+        Queue.Enqueue(start);
 
-        foreach(Node i in path)
+        while (Queue.Count > 0)
         {
-            waypoints.Add(i.tile);
-        }
+            Tile x = Queue.Dequeue();
+            CloseSet.Add(x);
+            if (x == final)
+            {
 
+                return reconstructTilePathMap(start, final);
+            }
+
+
+            foreach (Tile i in x.neighbors)
+            {
+                if (i.GetState() == Tile.States.BUSY || CloseSet.Contains(i))
+                {
+                    Debug.Log("y is already visited");
+                    continue;
+                }
+                if (!Queue.Contains(i))
+                {
+                    Queue.Enqueue(i);
+                }
+
+                i.cameFrom = x;
+            }
+        }
+        return new List<Tile>();
+    }
+    
+    List<Tile> reconstructTilePathMap(Tile start, Tile final)
+    {
+        List<Tile> PathMap = new List<Tile>();
+        Tile curr = final;
+        while (curr != null)
+        {
+            PathMap.Add(curr);
+            Tile temp = curr;
+            curr = curr.cameFrom;
+            temp.cameFrom = null;
+        }
+        PathMap.Reverse();
+        return PathMap;
+    }
+
+    public List<Tile> MakeWaypoints(Tile startTile, Tile finalTile)
+    {
+
+        //Node start;
+        //Node final;
+        //start = new Node(startTile);
+        //final = new Node(finalTile);
+        //start.g = 0;
+        //start.h = h_func(start, final);
+        //start.f = start.h + start.g;
+        
+        //List<Node> path = MakeEzWay(startTile, finalTile);
+
+        List<Tile> waypoints = MakeEzWay(startTile, finalTile);
+
+        Debug.Log("HERE path length:" + waypoints.Count);
+
+        return waypoints;
+//        yield return null;
 
         //RaycastHit[] hit;
         //Ray ray;
-
         //ray = new Ray(startTile.transform.position, Vector3.left)
-
         //if (Physics.Raycast(ray, out hit))
         //{
         //    temp = hit.transform.gameObject.GetComponent<Tile>();
         //    neighbors.Add(temp);
         //}
-
         //waypoints.Add(startTile);
         //path.Remove(start);
         //while(path.Count > 0)
@@ -129,7 +165,6 @@ public class PathFinding
         //    Tile from = startTile;
         //    ray = new Ray(from.go.transform.position, to.go.transform.position);
         //    hit = Physics.RaycastAll(ray);
-
         //    float maxDist = 0;
         //    Tile mostFarTile;
         //    foreach(RaycastHit i in hit)
@@ -140,13 +175,8 @@ public class PathFinding
         //            maxDist = dist;
         //            mostFarTile = i.transform.gameObject.GetComponent<Tile>();
         //        }
-
-
         //    }
-
         //}
-
-        return waypoints;
     }
 
     List<Node> reconstructPathMap(Node start, Node final)
