@@ -8,10 +8,10 @@ using System.Threading;
 /**
  * --обработать случай, когда вершина недостижима 2 - done
  * --переделать GoAndStay 1 - done
- * --произвести оптимизацию (заменить клетки на котнрольные точки)  5
+ * --произвести оптимизацию (заменить клетки на контрольные точки)  5 - canceled
  * --общий рефакторинг 3
  * --реализовать анимированное передвижение 4
- * 
+ * --оптимизация (многопоточность/ корутины) 2.5  - вроде сносно работает
  **/
 
 public class Unit : MonoBehaviour
@@ -33,20 +33,14 @@ public class Unit : MonoBehaviour
     private List<Tile> wayPoints;
     private HashSet<Tile> viewedTiles; 
     private PathFinding pathFinding;
-    private Thread pathThread;
 
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.autoBraking = false;
-        pathFinding = new PathFinding(this);
+        pathFinding = new PathFinding();
         wayPoints = new List<Tile>();
-        pathThread = new Thread(new ThreadStart(
-        delegate
-        {
-           
-        }));
 
         viewedTiles = new HashSet<Tile>();
 
@@ -66,10 +60,6 @@ public class Unit : MonoBehaviour
 
     void Update()
     {
-        //if (!pathThread.IsAlive)
-        //{
-        //    pathThread.Start();
-        //}
         if (!toggle.isOn)
         {
             GetNewDestination();

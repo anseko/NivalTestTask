@@ -14,21 +14,15 @@ public class Tile : MonoBehaviour
         BUSY
     }
 
-
     public static List<Tile> availableTiles;
-
     public static IdleTileState idle;
     public static AvailableTileState available;
     public static BusyTileState busy;
 
     public Material cubeMaterial;
     public GameObject cube;
-
     public States prevState;
-
     public Tile cameFrom { get; set; } //только для поиска пути
-
-    private TileState _state;
 
     public GameObject go
     {
@@ -41,6 +35,8 @@ public class Tile : MonoBehaviour
         get;
         set;
     }
+
+    private TileState _state;
 
     void Start()
     {

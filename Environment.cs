@@ -17,7 +17,7 @@ public class Environment : MonoBehaviour
     public GameObject UnitPrefab;
     public NavMeshSurface meshSurface;
 
-    // Start is called before the first frame update
+ 
     void Start()
     {
         gameField = new List<Tile>();
