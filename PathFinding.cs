@@ -7,7 +7,7 @@ public class PathFinding
 
     private Tile final = null;
 
-    // кастрированный а*
+    //а*
     private List<Tile> MakeWay(Tile start, Tile final)
     {
         List<Tile> Queue = new List<Tile>();
