@@ -6,9 +6,9 @@ using UnityEngine.AI;
 public class Environment : MonoBehaviour
 {
     const int MAX_UNITS = 5;
-    const int MIN_UNITS = 1;
+    const int MIN_UNITS = 5;
     const int MAX_SIZE = 10;
-    const int MIN_SIZE = 5;
+    const int MIN_SIZE = 10;
 
 
     public static List<Tile> gameField;

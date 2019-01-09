@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -24,6 +25,7 @@ public class Unit : MonoBehaviour
     private List<Tile> wayPoints;
     private HashSet<Tile> viewedTiles; 
     private PathFinding pathFinding;
+    private Thread pathThread;
 
     private void Awake()
     {
@@ -31,6 +33,7 @@ public class Unit : MonoBehaviour
         wayPoints = new List<Tile>();
         viewedTiles = new HashSet<Tile>();
         gotTile = false;
+
     }
 
     void Start()
@@ -75,7 +78,9 @@ public class Unit : MonoBehaviour
                 if (destTile.GetState() != Tile.States.BUSY)
                 {
                     currTile = GetCurrentTile();
-                    wayPoints = pathFinding.MakeWaypoints(currTile, destTile);
+                    pathThread = new Thread(new ThreadStart(delegate { wayPoints = pathFinding.MakeWaypoints(currTile, destTile); }));
+                    pathThread.Start();
+                    pathThread.Join();
                 }
             }
             else
@@ -99,7 +104,10 @@ public class Unit : MonoBehaviour
                 if (!viewedTiles.Contains(destTile))
                 {
                     viewedTiles.Add(destTile);
-                    wayPoints = pathFinding.MakeWaypoints(GetCurrentTile(), destTile);
+                    currTile = GetCurrentTile();
+                    pathThread = new Thread(new ThreadStart(delegate { wayPoints = pathFinding.MakeWaypoints(currTile, destTile); }));
+                    pathThread.Start();
+                    pathThread.Join();
 
                     if (wayPoints.Count > 0)
                     {
@@ -198,4 +206,13 @@ public class Unit : MonoBehaviour
         return temp;
     }
 
+    private void OnDestroy()
+    {
+        
+    }
+
+    private void OnApplicationQuit()
+    {
+        
+    }
 }

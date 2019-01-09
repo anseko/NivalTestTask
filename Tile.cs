@@ -22,6 +22,7 @@ public class Tile : MonoBehaviour
     public GameObject cube;
     public States prevState;
     public Tile cameFrom { get; set; } //только для поиска пути
+    public Vector3 pos { get; set; } //только для поиска пути
 
     public GameObject go
     {
@@ -61,6 +62,7 @@ public class Tile : MonoBehaviour
 
         GetNeighbors();
         cameFrom = null;
+        pos = go.transform.position;
     }
 
     void Update()

@@ -12,8 +12,6 @@ public class PathFinding
         List<Tile> Queue = new List<Tile>();
         HashSet<Tile> CloseSet = new HashSet<Tile>();
 
-        float t_g_score = 0;
-
         Queue.Add(start);
 
         while (Queue.Count > 0)
@@ -34,7 +32,6 @@ public class PathFinding
                     //Debug.Log("i is already visited");
                     continue;
                 }
-                t_g_score = Vector3.Distance(x.go.transform.position, i.go.transform.position);
 
                 if (!Queue.Contains(i))
                 {
@@ -77,8 +74,8 @@ public class PathFinding
 
     private int Compare(Tile x, Tile y)
     {
-        return (int)(Vector3.Distance(x.go.transform.position, final.go.transform.position) -
-                Vector3.Distance(y.go.transform.position, final.go.transform.position));
+        return (int)(Vector3.Distance(x.pos, final.pos) -
+                    Vector3.Distance(y.pos, final.pos));
     }
 
 }
