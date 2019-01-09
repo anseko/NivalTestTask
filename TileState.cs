@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TileStates
 {
 
-    public abstract class TileState
+    abstract class TileState
     {
         public abstract void OnPointerClick(int button, Tile tile);
         public abstract void OnEnter(Tile tile);
@@ -13,7 +13,7 @@ namespace TileStates
         public abstract void OnExit(Tile tile);
     }
 
-    public class IdleTileState : TileState
+    class IdleTileState : TileState
     {
         public override void Update(Tile tile)
         {
@@ -43,7 +43,7 @@ namespace TileStates
         }
     }
 
-    public class AvailableTileState : TileState
+    class AvailableTileState : TileState
     {
         
         public override void Update(Tile tile)
@@ -86,7 +86,7 @@ namespace TileStates
         }
     }
 
-    public class BusyTileState : TileState
+    class BusyTileState : TileState
     {
 
         public override void Update(Tile tile)

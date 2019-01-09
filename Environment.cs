@@ -17,12 +17,17 @@ public class Environment : MonoBehaviour
     public GameObject UnitPrefab;
     public NavMeshSurface meshSurface;
 
- 
-    void Start()
+    private void Awake()
     {
         gameField = new List<Tile>();
+        units = new List<Unit>();
+    }
 
+    void Start()
+    {
         meshSurface.layerMask = LayerMask.GetMask("Default");
+
+        //создать игровое поле
         int size = Random.Range(MIN_SIZE, MAX_SIZE);
         Debug.Log("gameField size:"+size);
         for(int i = 0; i < size; i++)
@@ -38,9 +43,10 @@ public class Environment : MonoBehaviour
         }
         meshSurface.BuildNavMesh();
 
+
+        //создать юнитов
         size = Random.Range(MIN_UNITS, MAX_UNITS);
         Debug.Log("Num of units:" + size);
-        //создать юнитов
         for (int i=0;i< size; i++)
         {
             GameObject go = Instantiate(UnitPrefab);
@@ -51,14 +57,8 @@ public class Environment : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
 
-    }
-
-    private void OnGUI()
-    {
-       
     }
 }

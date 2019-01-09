@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using TileStates;
-using System;
 
 public class Tile : MonoBehaviour
 {
@@ -15,9 +13,10 @@ public class Tile : MonoBehaviour
     }
 
     public static List<Tile> availableTiles;
-    public static IdleTileState idle;
-    public static AvailableTileState available;
-    public static BusyTileState busy;
+
+    static IdleTileState idle;
+    static AvailableTileState available;
+    static BusyTileState busy;
 
     public Material cubeMaterial;
     public GameObject cube;
@@ -38,23 +37,28 @@ public class Tile : MonoBehaviour
 
     private TileState _state;
 
-    void Start()
+    private void Awake()
     {
         idle = new IdleTileState();
         available = new AvailableTileState();
         busy = new BusyTileState();
 
         availableTiles = new List<Tile>();
+        neighbors = new List<Tile>();
 
         _state = idle;
         prevState = States.IDLE;
+    }
+
+    void Start()
+    {
+       
         go = GetComponent<Transform>().gameObject;
 
         cube = Instantiate(cube);
         cube.transform.localPosition = go.transform.position + Vector3.up*0.55f;
         cube.SetActive(false);
 
-        neighbors = new List<Tile>();
         GetNeighbors();
         cameFrom = null;
     }

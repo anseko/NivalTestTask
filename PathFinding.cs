@@ -7,7 +7,6 @@ public class PathFinding
 
     private Tile final = null;
 
-    //а*
     private List<Tile> MakeWay(Tile start, Tile final)
     {
         List<Tile> Queue = new List<Tile>();
@@ -23,7 +22,7 @@ public class PathFinding
             Tile x = Queue[0];
             if(x == final)
             {
-                return reconstructTilePathMap(start, final);
+                return ReconstructTilePathMap(start, final);
             }
             Queue.Remove(x);
             CloseSet.Add(x);
@@ -32,7 +31,7 @@ public class PathFinding
             {
                 if(i.GetState() == Tile.States.BUSY || CloseSet.Contains(i))
                 {
-                    Debug.Log("i is already visited");
+                    //Debug.Log("i is already visited");
                     continue;
                 }
                 t_g_score = Vector3.Distance(x.go.transform.position, i.go.transform.position);
@@ -49,7 +48,8 @@ public class PathFinding
         return new List<Tile>();
     }
 
-    List<Tile> reconstructTilePathMap(Tile start, Tile final)
+
+    private List<Tile> ReconstructTilePathMap(Tile start, Tile final)
     {
         List<Tile> PathMap = new List<Tile>();
         Tile curr = final;
@@ -64,20 +64,19 @@ public class PathFinding
         return PathMap;
     }
 
+
     public List<Tile> MakeWaypoints(Tile startTile, Tile finalTile)
     {
         final = finalTile;
         List<Tile> waypoints = MakeWay(startTile, finalTile);
-
-        Debug.Log("HERE path length:" + waypoints.Count);
+        //Debug.Log("HERE path length:" + waypoints.Count);
 
         return waypoints;
     }
 
 
-    int Compare(Tile x, Tile y)
+    private int Compare(Tile x, Tile y)
     {
-
         return (int)(Vector3.Distance(x.go.transform.position, final.go.transform.position) -
                 Vector3.Distance(y.go.transform.position, final.go.transform.position));
     }

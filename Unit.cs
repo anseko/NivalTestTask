@@ -3,16 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
-using System.Threading;
 
-/**
- * --обработать случай, когда вершина недостижима 2 - done
- * --переделать GoAndStay 1 - done
- * --произвести оптимизацию (заменить клетки на контрольные точки)  5 - canceled
- * --общий рефакторинг 3
- * --реализовать анимированное передвижение 4
- * --оптимизация (многопоточность/ корутины) 2.5  - вроде сносно работает
- **/
 
 public class Unit : MonoBehaviour
 {
@@ -34,26 +25,27 @@ public class Unit : MonoBehaviour
     private HashSet<Tile> viewedTiles; 
     private PathFinding pathFinding;
 
+    private void Awake()
+    {
+        pathFinding = new PathFinding();
+        wayPoints = new List<Tile>();
+        viewedTiles = new HashSet<Tile>();
+        gotTile = false;
+    }
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.autoBraking = false;
-        pathFinding = new PathFinding();
-        wayPoints = new List<Tile>();
-
-        viewedTiles = new HashSet<Tile>();
-
-        gotTile = false;
+       
+        
         toggle = GameObject.Find("Toggle").GetComponent<Toggle>();
-
         toggle.onValueChanged.AddListener(delegate { ToggleValueChanging(); });
 
         float r = Random.Range(0f, 1f);
         float g = Random.Range(0f, 1f);
         float b = Random.Range(0f, 1f);
         go = GetComponent<Transform>().gameObject;
-        Debug.Log(r + " " + g + " " + b);
         go.GetComponent<Renderer>().material.SetColor("_Color", new Color(r, g, b));
     }
 
@@ -83,7 +75,6 @@ public class Unit : MonoBehaviour
                 if (destTile.GetState() != Tile.States.BUSY)
                 {
                     currTile = GetCurrentTile();
-
                     wayPoints = pathFinding.MakeWaypoints(currTile, destTile);
                 }
             }
@@ -112,9 +103,17 @@ public class Unit : MonoBehaviour
 
                     if (wayPoints.Count > 0)
                     {
-                        Tile.availableTiles.Remove(destTile);
-                        gotTile = true;
+                        if (go.GetComponent<Renderer>().material.color == Color.black)
+                        {
+
+                            float r = Random.Range(0f, 1f);
+                            float g = Random.Range(0f, 1f);
+                            float b = Random.Range(0f, 1f);
+                            go.GetComponent<Renderer>().material.SetColor("_Color", new Color(r, g, b));
+                        }
                         agent.isStopped = false;
+                        gotTile = true;
+                        Tile.availableTiles.Remove(destTile);
                         agent.SetDestination(wayPoints[0].go.transform.position);
                         wayPoints.Remove(wayPoints[0]);
                     }
@@ -193,9 +192,9 @@ public class Unit : MonoBehaviour
         Ray ray = new Ray(go.transform.position, Vector3.down);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-        temp = hit.transform.gameObject.GetComponent<Tile>();
+            temp = hit.transform.gameObject.GetComponent<Tile>();
         }
-        Debug.Log(temp);
+        //Debug.Log(temp);
         return temp;
     }
 
